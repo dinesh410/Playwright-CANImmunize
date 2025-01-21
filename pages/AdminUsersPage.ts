@@ -15,8 +15,7 @@ export class AdminUsersPage {
   readonly rolesDropdown: Locator;
   readonly organizationsDropdown: Locator;
   readonly passwordDropdown: Locator;
-  readonly passwordDropdownOption: Locator;
-  readonly editButton: (userName: string) => Locator;
+  readonly passwordDropdownOption: Locator;  
   readonly saveButton: Locator;
 
   constructor(page: Page) {
@@ -31,8 +30,7 @@ export class AdminUsersPage {
     this.rolesDropdown = page.locator('div').filter({ hasText: /^Select one or more roles$/ }).first();
     this.organizationsDropdown = page.locator('div').filter({ hasText: /^Select one or more organizations$/ }).first();
     this.passwordDropdown = page.getByRole('dialog').getByText('Server Generated Password');
-    this.editButton = (userName: string) =>
-      page.locator(`tr:has-text("${userName}") button:has-text("Edit")`);
+    
     this.saveButton = page.locator('button:has-text("Save")');
   }
 

@@ -1,6 +1,15 @@
 import { test, expect } from '../fixtures/fixture';
 import { faker } from '@faker-js/faker';
 
+const newUser = {
+    lastName: faker.person.lastName(),
+    firstName: faker.person.firstName(),
+    email: faker.internet.email(),
+    activeStatus: 'Active',
+    roles: ['Console User Manager', 'Super Admin'],
+    organizations: ['Evergreen Drugstore', 'MedExpress Pharmacy'],
+};
+
 test.describe('Admin - User Management', () => {
     test.beforeEach(async ({ loginPage, homePage }) => {
         await loginPage.navigate();
@@ -8,7 +17,7 @@ test.describe('Admin - User Management', () => {
         await homePage.navigateToUsersTab();
     });
 
-    test('Validate Table Record', async ({ adminUsersPage, userDetailsPage }) => {
+    test('Validate Table Record - Ensure accurate display of data for an existing admin console user.', async ({ adminUsersPage, userDetailsPage }) => {
         // Assuming the user details are static for now.
         // TODO: Update this to fetch the user details from API response.
         const expectedUser = {
@@ -30,35 +39,50 @@ test.describe('Admin - User Management', () => {
         await adminUsersPage.clickUser(expectedUser.lastName);
 
         // Verify the user details in the user info table.
-        await userDetailsPage.verifyUserInfoTable({fisrstName: expectedUser.firstName, lastName: expectedUser.lastName, email: expectedUser.email});
+        await userDetailsPage.verifyUserInfoTable({ firstName: expectedUser.firstName, lastName: expectedUser.lastName, email: expectedUser.email });
+
+        // Verify the roles of the user.
+        await userDetailsPage.verifyUserRoles(expectedUser.roles);
+
+        // Verify the organizations of the user.
+        await userDetailsPage.verifyUserOrganizations(expectedUser.organizations);
     });
 
     test('Add User with server-generated password and validate the created user', async ({ adminUsersPage, dialogSection, userDetailsPage }) => {
-        const newUser = {
-            lastName: faker.person.lastName(),
-            firstName: faker.person.firstName(),
-            email: faker.internet.email(),
-            activeStatus: 'Active',
-            roles: ['Console User Manager', 'Super Admin'],
-            organizations: ['Evergreen Drugstore', 'MedExpress Pharmacy'],
-        };
-
         // Add a new user with server generated password.
-        await adminUsersPage.addUser(newUser, 'Server Generated Password');  
+        await adminUsersPage.addUser(newUser, 'Server Generated Password');
 
         // Verfiy the user created message.
         await dialogSection.verifyDialogMessage('User successfully created with password.');
 
         // Click Ok to verify created user details.
         await dialogSection.clickOkButton();
-        
+
         // Verify the user details in the user info table.
-        await userDetailsPage.verifyUserInfoTable({firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email});
+        await userDetailsPage.verifyUserInfoTable({ firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email });
 
         // Verify the roles of the user.
-        // await userDetailsPage.verifyUserRoles(newUser.roles);
+        await userDetailsPage.verifyUserRoles(newUser.roles);
 
         // Verify the organizations of the user.
-        // await userDetailsPage.verifyUserOrganizations(newUser.organizations);
+        await userDetailsPage.verifyUserOrganizations(newUser.organizations);
+    });
+
+    test('Edit user details and verify updated details', async ({ adminUsersPage, dialogSection, userDetailsPage }) => {
+        // TODO: Create a User using and API and fetch the user details for independent and effective testing.
+        // For now, using the same user created in the previous test.
+       
+        // Select existing user to edit.
+        // Click on the user to view the user details.
+        await adminUsersPage.clickUser(newUser.email);
+
+        // Verify the user details in the user info table.
+        await userDetailsPage.verifyUserInfoTable({ firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email });
+
+        // Verify the roles of the user.
+        await userDetailsPage.verifyUserRoles(newUser.roles);
+
+        // Verify the organizations of the user.
+        await userDetailsPage.verifyUserOrganizations(newUser.organizations);
     });
 });

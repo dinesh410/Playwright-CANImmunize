@@ -7,6 +7,8 @@ export class UserDetailsPage {
     readonly organizationsTable: Locator;
     readonly labelSelector: (labelText: string) => Locator;
     readonly valueSelector: (labelText: string) => Locator;
+    readonly tableRowsSelector: Locator;
+    readonly editButton: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -14,70 +16,49 @@ export class UserDetailsPage {
         this.rolesTable = page.locator('table').nth(1);
         this.organizationsTable = page.locator('table').nth(2);
         this.labelSelector = (labelText) => page.locator(`th:has(span:has-text("${labelText}"))`);
-        this.valueSelector = (labelText) => page.locator(`th:has(span:has-text("${labelText} + td span"))`);
+        this.valueSelector = (labelText) => page.locator(`th:has(span:has-text("${labelText}")) + td span`);
+        this.tableRowsSelector = page.locator('.ant-table-tbody tr');
+        this.editButton = page.locator(`button:has-text("Edit")`);
     }
 
+    // TODO: Update this method to verify based on the table headers.
     // Function to verify user details
-    async verifyUserInfoTable(expectedDetails) {
-        // Verify single-value fields
+    async verifyUserInfoTable({ firstName, lastName, email }) {
+        // Map the user details        
         const userInfoDetails = {
-            'First Name': expectedDetails.firstName,
-            'Last Name': expectedDetails.lastName,
-            'Email': expectedDetails.email,
+            'First Name': firstName,
+            'Last Name': lastName,
+            'Email': email,
         };
 
-        for (const [label, expectedValue] of Object.entries(userInfoDetails)) {
-            // Check if the label exists
-            const isLabelVisible = await this.labelSelector(label).isVisible();
-            if (!isLabelVisible) throw new Error(`Label "${label}" not found in the table`);
-
-            // Get the actual value
-            const actualValue = await this.valueSelector(label).textContent();
-
-            // Validate the value
-            expect(actualValue?.trim()).toBe(expectedValue);
-        }
+        for (const [label, value] of Object.entries(userInfoDetails)) {
+            const labelLocator = this.labelSelector(label).first();
+            const valueLocator = this.valueSelector(label).first();
+            expect(await labelLocator.textContent()).toBe(label);
+            expect(await valueLocator.textContent()).toBe(value);
+        }   
     }
 
     // Function to verify roles and description in the table
     async verifyUserRoles(expectedRoles) {
-        const tableRows = this.page.locator('.ant-table-tbody tr');
-
-        // Get all roles from the table
-        const actualRoles = await tableRows.evaluateAll((rows) =>
-            rows.map((row) => ({
-                name: row.querySelector('td:nth-of-type(1) a')?.textContent?.trim(),
-                // description: row.querySelector('td:nth-of-type(2)')?.textContent?.trim(),
-            }))
-        );
-
-        // Compare the expected and actual roles
+        // Verify roles in the table by looping through each role
         for (const expectedRole of expectedRoles) {
-            const match = actualRoles.find(
-                (role) => role.name === expectedRole.name // && role.description === expectedRole.description
-            );
-            expect(match).toBeTruthy();
+            const roleRow = this.rolesTable.getByRole('link', { name: `${expectedRole}` });
+
+            // Verify role
+            await expect(roleRow).toBeVisible();
         }
+    
     }
 
     // Function to verify organizations in the table
     async verifyUserOrganizations(expectedOrganizations) {
-        const tableRows = this.page.locator('.ant-table-tbody tr');
+         // Verify organizations in the table by looping through each role
+         for (const expectedOrganization of expectedOrganizations) {
+            const organizationRow = this.organizationsTable.getByRole('link', { name: `${expectedOrganization}` });
 
-        // Extract organization data from the table
-        const actualOrganizations = await tableRows.evaluateAll((rows) =>
-            rows.map((row) => ({
-                name: row.querySelector('td:nth-of-type(1) a')?.textContent?.trim(),
-                // code: row.querySelector('td:nth-of-type(2)')?.textContent?.trim(),
-            }))
-        );
-
-        // Compare expected organizations with actual organizations
-        for (const expectedOrg of expectedOrganizations) {
-            const match = actualOrganizations.find(
-                (org) => org.name === expectedOrg.name // && org.code === expectedOrg.code
-            );
-            expect(match).toBeTruthy();
+            // Verify organization
+            await expect(organizationRow).toBeVisible();
         }
     }
 }

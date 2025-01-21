@@ -1,5 +1,4 @@
 import { defineConfig, devices } from '@playwright/test';
-import { TestOptions } from './fixtures/fixture';
 
 /**
  * Read environment variables from file.
@@ -12,7 +11,7 @@ import { TestOptions } from './fixtures/fixture';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig< TestOptions >({
+export default defineConfig({
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
