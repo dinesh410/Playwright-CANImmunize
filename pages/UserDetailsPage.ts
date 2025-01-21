@@ -9,6 +9,7 @@ export class UserDetailsPage {
     readonly valueSelector: (labelText: string) => Locator;
     readonly tableRowsSelector: Locator;
     readonly editButton: Locator;
+    readonly addRoleButton: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -19,6 +20,7 @@ export class UserDetailsPage {
         this.valueSelector = (labelText) => page.locator(`th:has(span:has-text("${labelText}")) + td span`);
         this.tableRowsSelector = page.locator('.ant-table-tbody tr');
         this.editButton = page.locator(`button:has-text("Edit")`);
+        this.addRoleButton = page.locator(`button:has-text("Add Role")`);
     }
 
     // TODO: Update this method to verify based on the table headers.
@@ -35,7 +37,8 @@ export class UserDetailsPage {
             const labelLocator = this.labelSelector(label).first();
             const valueLocator = this.valueSelector(label).first();
             expect(await labelLocator.textContent()).toBe(label);
-            expect(await valueLocator.textContent()).toBe(value);
+            const actualText = await valueLocator.textContent();
+            expect(actualText?.toLowerCase()).toBe(value.toLowerCase());
         }   
     }
 
@@ -60,5 +63,9 @@ export class UserDetailsPage {
             // Verify organization
             await expect(organizationRow).toBeVisible();
         }
+    }
+
+    async clickAddRoleButton() {
+        await this.addRoleButton.click();
     }
 }

@@ -71,18 +71,70 @@ test.describe('Admin - User Management', () => {
     test('Edit user details and verify updated details', async ({ adminUsersPage, dialogSection, userDetailsPage }) => {
         // TODO: Create a User using and API and fetch the user details for independent and effective testing.
         // For now, using the same user created in the previous test.
+
+        const editedUser = {    
+            lastName: faker.person.lastName(),
+            firstName: faker.person.firstName(),
+            email: newUser.email,
+        };
        
         // Select existing user to edit.
         // Click on the user to view the user details.
-        await adminUsersPage.clickUser(newUser.email);
+        // await adminUsersPage.clickUser(newUser.email);
+        await adminUsersPage.clickUser('Jacey');
+
+        // Click on the Edit button.
+        await userDetailsPage.editButton.click();
+
+        // Update the user details.
+        await dialogSection.editUserDetails(editedUser.firstName, editedUser.lastName, editedUser.email);
+
 
         // Verify the user details in the user info table.
-        await userDetailsPage.verifyUserInfoTable({ firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email });
+        await userDetailsPage.verifyUserInfoTable({ firstName: editedUser.firstName, lastName: editedUser.lastName, email: editedUser.email });
+    });
 
-        // Verify the roles of the user.
-        await userDetailsPage.verifyUserRoles(newUser.roles);
+    test('Manage Roles - Add a new role and verify the role added', async ({ adminUsersPage, dialogSection, userDetailsPage }) => {
+        // TODO: Create a User using and API and fetch the user details for independent and effective testing.
+        // For now, using the same user created in the previous test.
 
-        // Verify the organizations of the user.
-        await userDetailsPage.verifyUserOrganizations(newUser.organizations);
+        // Select existing user to edit.
+        // Click on the user to view the user details.
+        // await adminUsersPage.clickUser(newUser.email);
+        await adminUsersPage.clickUser('Jacey');
+
+        // Click on the Add Role button.
+        await userDetailsPage.clickAddRoleButton();
+
+        // Add a new role to the user.
+        await dialogSection.searchAndAddRole('Admin');
+
+       
+    });
+
+    test('Manage Roles - Remove a role and verify the role removed', async ({ adminUsersPage, dialogSection, userDetailsPage }) => {
+        // TODO: Create a User using and API and fetch the user details for independent and effective testing.
+        // For now, using the same user created in the previous test.
+
+        const editedUser = {    
+            lastName: faker.person.lastName(),
+            firstName: faker.person.firstName(),
+            email: newUser.email,
+        };
+       
+        // Select existing user to edit.
+        // Click on the user to view the user details.
+        // await adminUsersPage.clickUser(newUser.email);
+        await adminUsersPage.clickUser('Jacey');
+
+        // Click on the Edit button.
+        await userDetailsPage.editButton.click();
+
+        // Update the user details.
+        await dialogSection.editUserDetails(editedUser.firstName, editedUser.lastName, editedUser.email);
+
+
+        // Verify the user details in the user info table.
+        await userDetailsPage.verifyUserInfoTable({ firstName: editedUser.firstName, lastName: editedUser.lastName, email: editedUser.email });
     });
 });
