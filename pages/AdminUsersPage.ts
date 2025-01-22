@@ -34,15 +34,26 @@ export class AdminUsersPage {
     this.saveButton = page.locator('button:has-text("Save")');
   }
 
-  // Verify the table headers
-  async validateTableHeaders(expectedHeaders: string[]) {
+  /**
+ * Verifies that the table headers match the expected headers.
+ *
+ * @param {string[]} expectedHeaders - An array of expected header strings.
+ * @returns {Promise<void>} A promise that resolves when the headers are validated.
+ */
+  async validateTableHeaders(expectedHeaders: string[]): Promise<void>  {
     const headers = await this.tableHeaders.allTextContents();
     expect(headers).toEqual(expectedHeaders);
   }
 
   // Assuming the table order is: Last Name, First Name, Email, Active, Role, Organizations.
   // TODO: Update this method to verify based on the table headers.
-  async validateUserDetails(expectedUser) {
+    /**
+   * Validates the user details in the table.
+   *
+   * @param expectedUser - The expected user details.
+   * @returns {Promise<void>} A promise that resolves when the user details are validated.
+   */
+  async validateUserDetails(expectedUser): Promise<void> {
     const userRow = this.page.locator(`tr:has(td:has-text("${expectedUser.email}"))`);
     console.log('userRow', userRow);
 
@@ -62,7 +73,14 @@ export class AdminUsersPage {
     expect(organizations.map((org) => org.trim())).toEqual(expectedUser.organizations);
   }
 
-  async addUser(userDetails: UserDetails, passwordType: string) {
+  /**
+   * Adds a new user using the provided user details and password type.
+   *
+   * @param {UserDetails} userDetails - The details of the user to add.
+   * @param {string} passwordType - The type of password to use.
+   * @returns {Promise<string>} A promise that resolves with the user ID when the user is added.
+   */
+  async addUser(userDetails: UserDetails, passwordType: string): Promise<any>{
     await this.addUserButton.click();
     await this.firstNameInput.fill(userDetails.firstName);
     await this.lastNameInput.fill(userDetails.lastName);
@@ -106,11 +124,23 @@ export class AdminUsersPage {
     return apiResponse.json();
   }
 
+  /**
+   * Clicks on a user in the table based on their email.
+   *
+   * @param {string} email - The email of the user to click.
+   * @returns {Promise<void>} A promise that resolves when the user is clicked.
+   */
   async clickUser(email: string) {
     await this.page.locator(`td:has-text("${email}")`).first().click();
   } 
 
-  async createUserWithAPI(userDetails: any) {
+  /**
+   * Creates a new user using the API with the provided user details.
+   *
+   * @param {any} userDetails - The details of the user to create.
+   * @returns {Promise<string | null>} A promise that resolves with the user ID when the user is created, or null if the creation fails.
+   */
+  async createUserWithAPI(userDetails: any): Promise<string | null>{
     const apiContext = await request.newContext();
     const response = await apiContext.post('/fhir/v1/org-admin-user', {
       data: {
@@ -126,10 +156,12 @@ export class AdminUsersPage {
 
     if (response.ok()) {
       console.log('User created successfully');
-      const responseData = await response;
+      const responseData = await response.text();
       console.log(responseData);
+      return responseData;
     } else {
       console.error('Failed to create user', response.status(), response.statusText());
+      return null;
     }
   }
 }

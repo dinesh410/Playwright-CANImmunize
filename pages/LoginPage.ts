@@ -13,23 +13,52 @@ export class LoginPage {
     this.continueButton = page.getByRole('button', { name: 'Continue' });
   }
 
-  async navigate() {
+  /**
+   * Navigates to the login page.
+   *
+   * @returns {Promise<void>} A promise that resolves when the navigation is complete.
+   */
+  async navigateToLoginPage(): Promise<void> {
     await this.page.goto('/');
   }
 
-  async enterEmail(email: string) {
+  /**
+   * Enters the email in the login form.
+   *
+   * @param {string} email - The email to enter.
+   * @returns {Promise<void>} A promise that resolves when the email is entered.
+   */
+  async enterEmail(email: string): Promise<void> {
     await this.emailInput.fill(email);
   }
 
-  async enterPassword(password: string) {
+  /**
+   * Enters the password in the login form.
+   *
+   * @param {string} password - The password to enter.
+   * @returns {Promise<void>} A promise that resolves when the password is entered.
+   */
+  async enterPassword(password: string): Promise<void> {
     await this.passwordInput.fill(password);
   }
 
-  async clickContinueButton() {
+  /**
+   * Clicks the Continue button in the login form.
+   *
+   * @returns {Promise<void>} A promise that resolves when the Continue button is clicked.
+   */
+  async clickContinueButton(): Promise<void> {
     await this.continueButton.click();
   }
 
-  async login(email: string, password: string) {
+    /**
+   * Logs in using the provided email and password.
+   *
+   * @param {string} email - The email to use for login.
+   * @param {string} password - The password to use for login.
+   * @returns {Promise<void>} A promise that resolves when the login is complete.
+   */
+    async login(email: string, password: string): Promise<void> {
     // Intercept the API response
     const apiResponsePromise = this.page.waitForResponse((response) =>
       response.url().includes('/fhir/v1/user') && response.request().method() === 'GET'

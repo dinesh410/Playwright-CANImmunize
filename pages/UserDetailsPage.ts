@@ -29,14 +29,28 @@ export class UserDetailsPage {
         this.popOverDialog = page.locator('div[role="tooltip"]');
     }
 
+    /**
+     * Clicks the "Add Role" button.
+     * @returns {Promise<void>}
+     */
     async clickAddRoleButton() {
         await this.addRoleButton.click();
     }
 
+    /**
+     * Clicks the "Edit" button.
+     * @returns {Promise<void>}
+     */
     async clickEditButton() {
         await this.editButton.click();
     }
 
+    /**
+     * Removes a role from the roles table.
+     * Waits for and validates the API response after removal.
+     * @param {string} roleName - The name of the role to remove.
+     * @returns {Promise<void>}
+     */
     async removeRole(roleName: string) {
         const roleRow = await this.rolesTable.locator(`tr:has-text("${roleName}")`).first();
         await roleRow.locator(this.removeButton).click();
@@ -54,9 +68,17 @@ export class UserDetailsPage {
         await expect(apiResponse.status()).toBe(200); // HTTP status for success"
     }
 
-    // TODO: Update this method to verify based on the table headers.
-    // Function to verify user details
+    /**
+     * Verifies user details in the user info table.
+     * @param {Object} userDetails - The user details to verify.
+     * @param {string} userDetails.firstName - The first name of the user.
+     * @param {string} userDetails.lastName - The last name of the user.
+     * @param {string} userDetails.email - The email of the user.
+     * @returns {Promise<void>}
+     */
     async verifyUserInfoTable({ firstName, lastName, email }) {
+        // TODO: Update this method to verify based on the table headers.
+
         // Map the user details        
         const userInfoDetails = {
             'First Name': firstName,
@@ -73,7 +95,11 @@ export class UserDetailsPage {
         }
     }
 
-    // Function to verify roles and description in the table
+    /**
+     * Verifies that all expected roles are present in the roles table.
+     * @param {string[]} expectedRoles - The list of roles to verify.
+     * @returns {Promise<void>}
+     */
     async verifyUserRoles(expectedRoles) {
         // Verify roles in the table by looping through each role
         for (const expectedRole of expectedRoles) {
@@ -85,7 +111,11 @@ export class UserDetailsPage {
 
     }
 
-    // Function to verify organizations in the table
+    /**
+     * Verifies that all expected organizations are present in the organizations table.
+     * @param {string[]} expectedOrganizations - The list of organizations to verify.
+     * @returns {Promise<void>}
+     */
     async verifyUserOrganizations(expectedOrganizations) {
         // Verify organizations in the table by looping through each role
         for (const expectedOrganization of expectedOrganizations) {
@@ -96,7 +126,11 @@ export class UserDetailsPage {
         }
     }
 
-    // Function to verify roles and description in the table
+    /**
+     * Verifies that a specific role is not visible in the roles table.
+     * @param {string} deletedRole - The role that should not be visible.
+     * @returns {Promise<void>}
+     */
     async verifyUserRoleNotVisibleInTable(deletedRole) {
         // Verify roles in the table by looping through each role
         const roleRow = this.rolesTable.getByRole('link', { name: `${deletedRole}` });
@@ -106,6 +140,11 @@ export class UserDetailsPage {
 
     }
 
+    /**
+     * Navigates to the user details page for a specific user.
+     * @param {string} userId - The ID of the user to view.
+     * @returns {Promise<void>}
+     */
     async navigateToUserDetailsPage(userId) {
         await this.page.goto(`/orgadminusers/${userId}`);
     }

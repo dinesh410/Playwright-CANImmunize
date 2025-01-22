@@ -1,10 +1,13 @@
 import { test } from '../fixtures/fixture';
 import { faker } from '@faker-js/faker';
+import { USERS } from '../fixtures/testData/userCredentials.json';
 
 test.describe('Admin - User Management', () => {
     test.beforeEach(async ({ loginPage, homePage }) => {
-        await loginPage.navigate();
-        await loginPage.login('goldenridge456@canimmunize.ca', 'xR8!sG3@wP1$kLz');
+        // Navigate to the login page and login with the super admin credentials.
+        await loginPage.navigateToLoginPage();
+        await loginPage.login((process.env.email ?? USERS.super_admin_1.email), (process.env.password ?? USERS.super_admin_1.password));
+        
         // Navigate to the Users tab.        
         await homePage.navigateToUsersTab();
     });
@@ -41,6 +44,7 @@ test.describe('Admin - User Management', () => {
     });
 
     test('Add User with server-generated password and validate the created user', async ({ homePage, adminUsersPage, dialogSection, userDetailsPage }) => {
+        // Create new user with details.
         const newUser = {
             lastName: faker.person.lastName(),
             firstName: faker.person.firstName(),
@@ -70,8 +74,10 @@ test.describe('Admin - User Management', () => {
     });
 
     test.describe('Create a new user and navigate to the user details page', () => {
+        // Let userId be empty for now.
         let userId = '';
 
+        // Create new user with details.
         const newUser = {
             lastName: faker.person.lastName(),
             firstName: faker.person.firstName(),
@@ -81,6 +87,7 @@ test.describe('Admin - User Management', () => {
             organizations: ['Evergreen Drugstore', 'MedExpress Pharmacy'],
         };       
 
+        // New role to be added to the user.
         const newRole = 'Call Centre Agent';
 
         test.beforeEach(async ({ adminUsersPage }) => {
@@ -92,6 +99,7 @@ test.describe('Admin - User Management', () => {
         });
 
         test('Edit user details and verify updated details', async ({ dialogSection, userDetailsPage }) => {
+            // Edit the user details.
             const editedUser = {
                 lastName: faker.person.lastName(),
                 firstName: faker.person.firstName(),

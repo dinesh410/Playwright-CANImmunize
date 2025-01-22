@@ -1,4 +1,3 @@
-
 import { Locator, Page } from '@playwright/test';
 
 export class HomePage {
@@ -12,21 +11,39 @@ export class HomePage {
     this.usersLinkButton = page.getByRole('link', { name: 'Users' });
   }
 
-    // Actions
-    async goToUsersTab() {
-      await this.page.goto('/orgadminusers');
-    }
-  
+  /**
+   * Navigates to the Users tab.
+   *
+   * @returns {Promise<void>} A promise that resolves when the navigation is complete.
+   */
+  async goToUsersTab(): Promise<void> {
+    await this.page.goto('/orgadminusers');
+  }
 
-  async openUsersMenu() {
+  /**
+   * Opens the Users menu.
+   *
+   * @returns {Promise<void>} A promise that resolves when the Users menu is opened.
+   */
+  async openUsersMenu(): Promise<void> {
     await this.usersMenuItemButton.click();
   }
 
-  async clickUsersLinkButton() {
+  /**
+   * Clicks the Users link button.
+   *
+   * @returns {Promise<void>} A promise that resolves when the Users link button is clicked.
+   */
+  async clickUsersLinkButton(): Promise<void> {
     await this.usersLinkButton.click();
   }
 
-  async navigateToUsersTab() {
+  /**
+   * Navigates to the Users tab by opening the Users menu and clicking the Users link button.
+   *
+   * @returns {Promise<void>} A promise that resolves when the navigation is complete.
+   */
+  async navigateToUsersTab(): Promise<void> {
     await this.openUsersMenu();
     await this.clickUsersLinkButton();
   }
