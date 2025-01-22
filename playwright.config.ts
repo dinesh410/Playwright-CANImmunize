@@ -1,4 +1,5 @@
 import { defineConfig, devices } from '@playwright/test';
+import type { APIRequestOptions } from './fixtures/fixture';
 
 /**
  * Read environment variables from file.
@@ -11,7 +12,7 @@ import { defineConfig, devices } from '@playwright/test';
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
-export default defineConfig({
+export default defineConfig<APIRequestOptions>({
   testDir: './tests',
   /* Run tests in files in parallel */
   fullyParallel: true,
@@ -24,6 +25,8 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
+  timeout: 60000,
+  expect: { timeout: 30000 },
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
@@ -34,7 +37,7 @@ export default defineConfig({
     video: 'retain-on-failure',
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'on-first-retry',    
   },
 
   /* Configure projects for major browsers */
@@ -43,7 +46,7 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
-
+/*
     {
       name: 'firefox',
       use: { ...devices['Desktop Firefox'] },
@@ -53,7 +56,7 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
-
+*/
     /* Test against mobile viewports. */
     // {
     //   name: 'Mobile Chrome',

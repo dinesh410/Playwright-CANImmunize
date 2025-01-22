@@ -34,14 +34,15 @@ export class LoginPage {
     const apiResponsePromise = this.page.waitForResponse((response) =>
       response.url().includes('/fhir/v1/user') && response.request().method() === 'GET'
     );
+
     await this.enterEmail(email);
     await this.enterPassword(password);
     await this.clickContinueButton();
     // Wait for the API response
     const apiResponse = await apiResponsePromise;
-
+    
     // Validate the response
     await expect(apiResponse.status()).toBe(200); // HTTP status for success"
-    await expect(this.page.url()).toContain('/home');
+    await expect(this.page.url()).toContain('/home');    
   }
 }

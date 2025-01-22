@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page, request } from '@playwright/test';
 import { UserDetails } from '../types/UserDetails';
 import { Helpers } from '../utils/Helpers';
 
@@ -62,7 +62,6 @@ export class AdminUsersPage {
     expect(organizations.map((org) => org.trim())).toEqual(expectedUser.organizations);
   }
 
-
   async addUser(userDetails: UserDetails, passwordType: string) {
     await this.addUserButton.click();
     await this.firstNameInput.fill(userDetails.firstName);
@@ -73,8 +72,6 @@ export class AdminUsersPage {
     if (userDetails.roles) {
       for (const role of userDetails.roles) {
         await this.helpers.selectFromDropdown(this.rolesDropdown, role);
-        // await this.rolesDropdown.click();
-        // await this.page.locator(`text=${role}`).click();
       }
     }
 
@@ -82,8 +79,6 @@ export class AdminUsersPage {
     if (userDetails.organizations) {
       for (const organization of userDetails.organizations) {
         await this.helpers.selectFromDropdown(this.organizationsDropdown, organization);
-        // await this.organizationsDropdown.click();
-        // await this.page.locator(`text=${organization}`).click();
       }
     }
 
@@ -95,11 +90,46 @@ export class AdminUsersPage {
       await this.page.locator(`text=${passwordType}`).click();
     }
 
+    // Intercept the API response
+    const apiResponsePromise = this.page.waitForResponse((response) =>
+      response.url().includes('/fhir/v1/org-admin-user') && response.request().method() === 'POST'
+    );
+
     // Save User
     await this.saveButton.click();
+
+    // Wait for the API response
+    const apiResponse = await apiResponsePromise;
+    
+    // Validate the response
+    await expect(apiResponse.status()).toBe(201); // HTTP status for success"
+    return apiResponse.json();
   }
 
   async clickUser(email: string) {
     await this.page.locator(`td:has-text("${email}")`).first().click();
   } 
+
+  async createUserWithAPI(userDetails: any) {
+    const apiContext = await request.newContext();
+    const response = await apiContext.post('/fhir/v1/org-admin-user', {
+      data: {
+        password: userDetails.password,
+        firstName: userDetails.firstName,
+        lastName: userDetails.lastName,
+        email: userDetails.email,
+        roles: userDetails.roles,
+        organizations: userDetails.organizations,
+        verifyEmail: userDetails.verifyEmail
+      }
+    });
+
+    if (response.ok()) {
+      console.log('User created successfully');
+      const responseData = await response;
+      console.log(responseData);
+    } else {
+      console.error('Failed to create user', response.status(), response.statusText());
+    }
+  }
 }

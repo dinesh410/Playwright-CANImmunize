@@ -4,6 +4,7 @@ import { HomePage } from '../pages/HomePage';
 import { AdminUsersPage } from '../pages/AdminUsersPage';
 import { DialogSection } from '../pages/DialogSection';
 import { UserDetailsPage  } from '../pages/UserDetailsPage';
+import { NotificationsDialog } from '../pages/NotificationsDialog';
 
 type Fixtures = {
     loginPage: LoginPage;
@@ -11,6 +12,7 @@ type Fixtures = {
     adminUsersPage: AdminUsersPage;
     dialogSection: DialogSection;
     userDetailsPage: UserDetailsPage;
+    notificationsDialog: NotificationsDialog;
 };
 
 export type APIRequestOptions = {
@@ -52,6 +54,10 @@ export const test = baseTest.extend<Fixtures & APIRequestOptions & APIRequestFix
     userDetailsPage: async ({ page }, use) => {
         const userDetailsPage = new UserDetailsPage(page);
         await use(userDetailsPage);
+    },
+    notificationsDialog: async ({ page }, use) => {
+        const notificationsDialog = new NotificationsDialog(page);
+        await use(notificationsDialog);
     },
 });
 
