@@ -17,6 +17,7 @@ export class AdminUsersPage {
   readonly passwordDropdown: Locator;
   readonly passwordDropdownOption: Locator;  
   readonly saveButton: Locator;
+  readonly searchInput: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -30,7 +31,7 @@ export class AdminUsersPage {
     this.rolesDropdown = page.locator('div').filter({ hasText: /^Select one or more roles$/ }).first();
     this.organizationsDropdown = page.locator('div').filter({ hasText: /^Select one or more organizations$/ }).first();
     this.passwordDropdown = page.getByRole('dialog').getByText('Server Generated Password');
-    
+    this.searchInput = page.locator('input[placeholder="Search"]');    
     this.saveButton = page.locator('button:has-text("Save")');
   }
 
@@ -131,6 +132,16 @@ export class AdminUsersPage {
    * @returns {Promise<void>} A promise that resolves when the user is clicked.
    */
   async clickUser(email: string) {
+     // Intercept the API response
+     const apiResponsePromise = this.page.waitForResponse((response) =>
+      response.url().includes('/fhir/v1/org-admin-user?') && response.request().method() === 'GET'
+    );
+
+    await this.searchInput.fill(email);
+
+    // Wait for the API response
+    await apiResponsePromise;
+
     await this.page.locator(`td:has-text("${email}")`).first().click();
   } 
 

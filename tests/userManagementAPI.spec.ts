@@ -1,9 +1,12 @@
-/*
+/* Was looking into saving token and using it for future requests. 
+   Will need API documnetation to see payload.
+ 
+
 import { test } from '../fixtures/fixture';
 
-test.describe('Admin - User Management', () => {
+test.describe('Admin - User Management API', () => {
     let authToken = '';
-    let userId = '3894e0e5-7abe-497a-ac1b-cf1c93f5c14b';
+    let userId = 'd78034ac-4acb-4e99-b694-605f6c747931';
 
     const userDetails = {
         "password": "",
@@ -34,8 +37,8 @@ test.describe('Admin - User Management', () => {
         const response = await apiRequest.post('/fhir/v1/org-admin-user', {
             headers: {
                 Authorization: `Bearer ${authToken}`,
-                Accept: `application/json, text/plain,  
-         }
+                Accept: `application/json`,  
+            },
             body: { ...userDetails },
         });
         
@@ -47,7 +50,8 @@ test.describe('Admin - User Management', () => {
         const response = await apiRequest.put(`/fhir/v1/org-admin-user/${userId}`, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
-                Accept: 'application/json, text/plain,'
+                Accept: `application/json`,
+                contentType: 'application/json',
             },
             body: {
                 'id':userId,
@@ -60,3 +64,4 @@ test.describe('Admin - User Management', () => {
     });
 });
 */
+

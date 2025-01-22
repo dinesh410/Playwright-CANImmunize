@@ -50,7 +50,7 @@ test.describe('Admin - User Management', () => {
             firstName: faker.person.firstName(),
             email: faker.internet.email(),
             activeStatus: 'Active',
-            roles: ['Console User Manager', 'Super Admin'],
+            roles: ['Clinic Owner', 'Super Admin'],
             organizations: ['Evergreen Drugstore', 'MedExpress Pharmacy'],
         };
 
@@ -83,7 +83,7 @@ test.describe('Admin - User Management', () => {
             firstName: faker.person.firstName(),
             email: faker.internet.email(),
             activeStatus: 'Active',
-            roles: ['Console User Manager', 'Super Admin'],
+            roles: ['Clinic Owner', 'Super Admin'],
             organizations: ['Evergreen Drugstore', 'MedExpress Pharmacy'],
         };       
 

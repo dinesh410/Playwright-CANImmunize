@@ -21,7 +21,7 @@ export class Helpers {
     await dropdown.click();
     const searchInput = dropdown.locator('input[type="search"]');
     await searchInput.fill(searchValue);
-    await this.page.locator(`.ant-select-item-option:has-text("${searchValue}")`).click();
+    await this.page.locator(`.ant-select-item-option:has-text("${searchValue}")`).first().click();
   }
 }
 
