@@ -1,2 +1,2 @@
-email=user-email
-password=user-password
+email = user - email;
+password = user - password;

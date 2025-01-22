@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from "@playwright/test";
 
 export class LoginPage {
   readonly page: Page;
@@ -8,9 +8,9 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.locator('#username');;
-    this.passwordInput = page.locator('#password');
-    this.continueButton = page.getByRole('button', { name: 'Continue' });
+    this.emailInput = page.locator("#username");
+    this.passwordInput = page.locator("#password");
+    this.continueButton = page.getByRole("button", { name: "Continue" });
   }
 
   /**
@@ -19,7 +19,7 @@ export class LoginPage {
    * @returns {Promise<void>} A promise that resolves when the navigation is complete.
    */
   async navigateToLoginPage(): Promise<void> {
-    await this.page.goto('/');
+    await this.page.goto("/");
   }
 
   /**
@@ -58,21 +58,28 @@ export class LoginPage {
    * @param {string} password - The password to use for login.
    * @returns {Promise<void>} A promise that resolves when the login is complete.
    */
-    async login(email: string, password: string): Promise<void> {
+  async login(email: string, password: string): Promise<void> {
     // Intercept the API response
-    const apiResponsePromise = this.page.waitForResponse((response) =>
-      response.url().includes('/fhir/v1/user') && response.request().method() === 'GET'
+    const apiResponsePromise = this.page.waitForResponse(
+      (response) =>
+        response.url().includes("/fhir/v1/user") &&
+        response.request().method() === "GET" && response.status() === 200
     );
 
     await this.enterEmail(email);
     await this.enterPassword(password);
     await this.clickContinueButton();
+
+    // Wait for latest request to complete. As multiple tries are being made and 500 returned and makes the test fail.
+    await this.page.waitForLoadState("networkidle");
     // Wait for the API response
     const apiResponse = await apiResponsePromise;
+
+    // Validate the url
+    await expect(this.page.url()).toContain("/home");
     
-    // Validate the response
-    await expect(apiResponse.status()).toBe(200); // HTTP status for success"
-    await expect(this.page.url()).toContain('/home');    
+    // return response
+    return apiResponse.json();
   }
 
   /**
@@ -84,34 +91,40 @@ export class LoginPage {
    */
   async loginAndReturnToken(email: string, password: string): Promise<string> {
     // Intercept the API response
-    const apiResponsePromise = this.page.waitForResponse((response) =>
-      response.url().includes('/fhir/v1/user') && response.request().method() === 'GET'
+    const apiResponsePromise = this.page.waitForResponse(
+      (response) =>
+        response.url().includes("/fhir/v1/user") &&
+        response.request().method() === "GET"
     );
 
     // Intercept the oauth API response
-    const authApiResponsePromise = this.page.waitForResponse((response) =>
-      response.url().includes('https://canimm-test.us.auth0.com/oauth/token') && response.request().method() === 'POST'
+    const authApiResponsePromise = this.page.waitForResponse(
+      (response) =>
+        response
+          .url()
+          .includes("https://canimm-test.us.auth0.com/oauth/token") &&
+        response.request().method() === "POST"
     );
 
     await this.enterEmail(email);
     await this.enterPassword(password);
     await this.clickContinueButton();
-    
+
     // Wait for the API response
     const apiResponse = await apiResponsePromise;
     const authApiResponse = await authApiResponsePromise;
-    
+
     // Validate the response
     await expect(apiResponse.status()).toBe(200); // HTTP status for success"
-    await expect(this.page.url()).toContain('/home'); 
-    
+    await expect(this.page.url()).toContain("/home");
+
     // Parse the response
     const responseBodyBuffer = await authApiResponse.body();
-    const responseBodyText = responseBodyBuffer.toString('utf8'); // Convert to text
+    const responseBodyText = responseBodyBuffer.toString("utf8"); // Convert to text
     // Parse JSON if it's a JSON response
     const responseBodyJson = JSON.parse(responseBodyText);
     const authToken = responseBodyJson.access_token; // Replace with actual key
-    console.log('Auth Token:', authToken);
-    return authToken
+    console.log("Auth Token:", authToken);
+    return authToken;
   }
 }

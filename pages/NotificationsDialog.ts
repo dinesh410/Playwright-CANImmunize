@@ -1,4 +1,4 @@
-import { Page, expect, Locator } from '@playwright/test';
+import { Page, expect, Locator } from "@playwright/test";
 
 export class NotificationsDialog {
   readonly page: Page;
@@ -15,7 +15,9 @@ export class NotificationsDialog {
    */
   async verifyText(expectedText: string): Promise<void> {
     // Locate the text element
-    const textLocator: Locator = await this.page.getByText(expectedText, { exact: false });
+    const textLocator: Locator = await this.page.getByText(expectedText, {
+      exact: false,
+    });
 
     // Ensure the element is visible
     await expect(textLocator).toBeVisible();

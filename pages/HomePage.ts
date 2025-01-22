@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { Locator, Page } from "@playwright/test";
 
 export class HomePage {
   readonly page: Page;
@@ -7,8 +7,8 @@ export class HomePage {
 
   constructor(page: Page) {
     this.page = page;
-    this.usersMenuItemButton = page.locator('#users-sub-menu');
-    this.usersLinkButton = page.getByRole('link', { name: 'Users' });
+    this.usersMenuItemButton = page.locator("#users-sub-menu");
+    this.usersLinkButton = page.getByRole("link", { name: "Users" });
   }
 
   /**
@@ -17,7 +17,7 @@ export class HomePage {
    * @returns {Promise<void>} A promise that resolves when the navigation is complete.
    */
   async goToUsersTab(): Promise<void> {
-    await this.page.goto('/orgadminusers');
+    await this.page.goto("/orgadminusers");
   }
 
   /**
