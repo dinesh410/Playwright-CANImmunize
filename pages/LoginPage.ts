@@ -51,7 +51,7 @@ export class LoginPage {
     await this.continueButton.click();
   }
 
-    /**
+  /**
    * Logs in using the provided email and password.
    *
    * @param {string} email - The email to use for login.
@@ -73,5 +73,45 @@ export class LoginPage {
     // Validate the response
     await expect(apiResponse.status()).toBe(200); // HTTP status for success"
     await expect(this.page.url()).toContain('/home');    
+  }
+
+  /**
+   * Logs in using the provided email and password.
+   *
+   * @param {string} email - The email to use for login.
+   * @param {string} password - The password to use for login.
+   * @returns {Promise<string>} A promise that resolves when the login is complete.
+   */
+  async loginAndReturnToken(email: string, password: string): Promise<string> {
+    // Intercept the API response
+    const apiResponsePromise = this.page.waitForResponse((response) =>
+      response.url().includes('/fhir/v1/user') && response.request().method() === 'GET'
+    );
+
+    // Intercept the oauth API response
+    const authApiResponsePromise = this.page.waitForResponse((response) =>
+      response.url().includes('https://canimm-test.us.auth0.com/oauth/token') && response.request().method() === 'POST'
+    );
+
+    await this.enterEmail(email);
+    await this.enterPassword(password);
+    await this.clickContinueButton();
+    
+    // Wait for the API response
+    const apiResponse = await apiResponsePromise;
+    const authApiResponse = await authApiResponsePromise;
+    
+    // Validate the response
+    await expect(apiResponse.status()).toBe(200); // HTTP status for success"
+    await expect(this.page.url()).toContain('/home'); 
+    
+    // Parse the response
+    const responseBodyBuffer = await authApiResponse.body();
+    const responseBodyText = responseBodyBuffer.toString('utf8'); // Convert to text
+    // Parse JSON if it's a JSON response
+    const responseBodyJson = JSON.parse(responseBodyText);
+    const authToken = responseBodyJson.access_token; // Replace with actual key
+    console.log('Auth Token:', authToken);
+    return authToken
   }
 }

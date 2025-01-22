@@ -33,7 +33,7 @@ export class UserDetailsPage {
      * Clicks the "Add Role" button.
      * @returns {Promise<void>}
      */
-    async clickAddRoleButton() {
+    async clickAddRoleButton(): Promise<void> {
         await this.addRoleButton.click();
     }
 
@@ -41,7 +41,7 @@ export class UserDetailsPage {
      * Clicks the "Edit" button.
      * @returns {Promise<void>}
      */
-    async clickEditButton() {
+    async clickEditButton(): Promise<void> {
         await this.editButton.click();
     }
 
@@ -51,7 +51,7 @@ export class UserDetailsPage {
      * @param {string} roleName - The name of the role to remove.
      * @returns {Promise<void>}
      */
-    async removeRole(roleName: string) {
+    async removeRole(roleName: string): Promise<void> {
         const roleRow = await this.rolesTable.locator(`tr:has-text("${roleName}")`).first();
         await roleRow.locator(this.removeButton).click();
 
@@ -76,7 +76,7 @@ export class UserDetailsPage {
      * @param {string} userDetails.email - The email of the user.
      * @returns {Promise<void>}
      */
-    async verifyUserInfoTable({ firstName, lastName, email }) {
+    async verifyUserInfoTable({ firstName, lastName, email }): Promise<void> {
         // TODO: Update this method to verify based on the table headers.
 
         // Map the user details        
@@ -100,7 +100,7 @@ export class UserDetailsPage {
      * @param {string[]} expectedRoles - The list of roles to verify.
      * @returns {Promise<void>}
      */
-    async verifyUserRoles(expectedRoles) {
+    async verifyUserRoles(expectedRoles): Promise<void> {
         // Verify roles in the table by looping through each role
         for (const expectedRole of expectedRoles) {
             const roleRow = this.rolesTable.getByRole('link', { name: `${expectedRole}` });
@@ -116,7 +116,7 @@ export class UserDetailsPage {
      * @param {string[]} expectedOrganizations - The list of organizations to verify.
      * @returns {Promise<void>}
      */
-    async verifyUserOrganizations(expectedOrganizations) {
+    async verifyUserOrganizations(expectedOrganizations): Promise<void> {
         // Verify organizations in the table by looping through each role
         for (const expectedOrganization of expectedOrganizations) {
             const organizationRow = this.organizationsTable.getByRole('link', { name: `${expectedOrganization}` });
@@ -131,7 +131,7 @@ export class UserDetailsPage {
      * @param {string} deletedRole - The role that should not be visible.
      * @returns {Promise<void>}
      */
-    async verifyUserRoleNotVisibleInTable(deletedRole) {
+    async verifyUserRoleNotVisibleInTable(deletedRole): Promise<void> {
         // Verify roles in the table by looping through each role
         const roleRow = this.rolesTable.getByRole('link', { name: `${deletedRole}` });
 
@@ -145,9 +145,7 @@ export class UserDetailsPage {
      * @param {string} userId - The ID of the user to view.
      * @returns {Promise<void>}
      */
-    async navigateToUserDetailsPage(userId) {
+    async navigateToUserDetailsPage(userId): Promise<void> {
         await this.page.goto(`/orgadminusers/${userId}`);
     }
-
-
 }

@@ -1,8 +1,9 @@
 /*
 import { test } from '../fixtures/fixture';
 
-test.describe.skip('Admin - User Management', () => {
+test.describe('Admin - User Management', () => {
     let authToken = '';
+    let userId = '3894e0e5-7abe-497a-ac1b-cf1c93f5c14b';
 
     const userDetails = {
         "password": "",
@@ -21,21 +22,37 @@ test.describe.skip('Admin - User Management', () => {
     };
 
     test.beforeEach(async ({ loginPage }) => {
-        await loginPage.navigate();
-        await loginPage.login('goldenridge456@canimmunize.ca', 'xR8!sG3@wP1$kLz').then(async (token) => {
+        await loginPage.navigateToLoginPage();
+        await loginPage.loginAndReturnToken('goldenridge456@canimmunize.ca', 'xR8!sG3@wP1$kLz').then(async (token) => {
             // Store the token in the context for future use.
             authToken = token;
         });
         console.log('Token:', authToken);
     });
 
-    test.only('test oauth login', async ({ apiRequest }) => {
+    test('test oauth login', async ({ apiRequest }) => {
         const response = await apiRequest.post('/fhir/v1/org-admin-user', {
             headers: {
                 Authorization: `Bearer ${authToken}`,
-                Accept: application/json
-            },
+                Accept: `application/json, text/plain,  
+         }
             body: { ...userDetails },
+        });
+        
+        
+        console.log('Response:', response);
+    });
+
+    test('test delete user', async ({ apiRequest }) => {
+        const response = await apiRequest.put(`/fhir/v1/org-admin-user/${userId}`, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+                Accept: 'application/json, text/plain,'
+            },
+            body: {
+                'id':userId,
+                'active':false
+            },
         });
         
         
