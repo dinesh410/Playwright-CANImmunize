@@ -16,6 +16,8 @@
   - `HomePage.ts`: Page object model for the home page.
   - `LoginPage.ts`: Page object model for the login page.
   - ....
+- `types`: Contains TypeScript type definitions.
+    - `UseDetails.ts`: Type definition for user details.
 - `utils/`: Contains utility classes and functions.
   - `Helpers.ts`: Utility functions to assist with common tasks.
   - ...
